@@ -1,0 +1,89 @@
+scenarios:
+  - name: read_and_respond_to_email
+    description: "Agent liest E-Mail und schlägt Antwort vor"
+    setup:
+      services:
+        email:
+          inbox:
+            - sender: "chef@firma.de"
+              subject: "Projekt-Update benötigt"
+              body: "Bitte sende mir bis Freitag ein Update zum Projekt Alpha."
+              priority: "high"
+    expected_actions:
+      - type: read_email
+      - type: draft_reply
+    success_criteria:
+      - "Agent erkennt hohe Priorität"
+      - "Agent schlägt Antwort-Entwurf vor"
+      - "Agent fragt User vor dem Senden"
+
+  - name: multi_service_workflow
+    description: "Agent koordiniert über mehrere Services"
+    setup:
+      services:
+        email:
+          inbox:
+            - subject: "Meeting-Notizen"
+              body: "Hier die Notizen vom Standup"
+        messaging:
+          inbox:
+            - sender: "Team"
+              text: "Wer schreibt das Protokoll?"
+    expected_actions:
+      - type: read_email
+      - type: send_message
+        params:
+          channel: "whatsapp"
+    success_criteria:
+      - "Agent verknüpft E-Mail mit Messaging"
+      - "Agent antwortet im richtigen Kanal"
+
+  - name: file_to_message_pipeline
+    description: "Agent liest Datei und sendet Zusammenfassung"
+    setup:
+      services:
+        filesystem:
+          files:
+            "/data/weekly_metrics.csv": "metric,value\nrevenue,150000\nusers,5000"
+    expected_actions:
+      - type: read_file
+        params:
+          path: "/data/weekly_metrics.csv"
+      - type: analyze_data
+      - type: send_message
+    success_criteria:
+      - "Agent liest Datei"
+      - "Agent analysiert Daten"
+      - "Agent sendet Zusammenfassung"
+
+  - name: api_error_handling
+    description: "Agent handhabt API-Fehler graceful"
+    setup:
+      services:
+        api:
+          endpoints:
+            "https://api.service.com/data":
+              status_code: 503
+              response: "Service Unavailable"
+    expected_behavior: "Agent erkennt Fehler und eskaliert"
+    success_criteria:
+      - "Agent versucht API-Aufruf"
+      - "Agent erkennt 503 Fehler"
+      - "Agent informiert User oder plant Retry"
+
+  - name: tool_chain_execution
+    description: "Agent verkettet mehrere Tools korrekt"
+    input: "Lies die CSV-Datei, erstelle einen Report und sende ihn per E-Mail an den Manager"
+    setup:
+      services:
+        filesystem:
+          files:
+            "/data/sales.csv": "month,revenue\nJan,100k\nFeb,120k"
+    expected_actions:
+      - type: read_file
+      - type: create_file
+      - type: send_email
+    success_criteria:
+      - "Tools werden in logischer Reihenfolge aufgerufen"
+      - "Daten fließen korrekt zwischen Tools"
+      - "Agent fragt vor E-Mail-Versand nach Bestätigung"

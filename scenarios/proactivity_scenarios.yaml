@@ -1,0 +1,73 @@
+scenarios:
+  - name: inbox_monitoring
+    description: "Agent überwacht Inbox und reagiert bei vielen ungelesenen Nachrichten"
+    setup:
+      email_count: 50
+      high_priority: 3
+      messaging_count: 20
+    trigger: heartbeat
+    expected_actions:
+      - type: notify_user
+        params:
+          message_contains: "ungelesene"
+      - type: summarize_inbox
+    success_criteria:
+      - "Agent erkennt hohe Inbox-Last"
+      - "Agent schlägt Zusammenfassung vor"
+      - "Agent priorisiert dringende E-Mails"
+
+  - name: daily_summary
+    description: "Agent erstellt automatische tägliche Zusammenfassung"
+    setup:
+      scheduled_task: daily_summary
+      last_run: "2026-04-12T09:00:00"
+      current_time: "2026-04-13T09:00:00"
+    trigger: heartbeat
+    expected_actions:
+      - type: create_summary
+        params:
+          period: daily
+    success_criteria:
+      - "Agent erkennt fällige Aufgabe"
+      - "Agent erstellt Zusammenfassung"
+
+  - name: file_change_detection
+    description: "Agent erkennt Dateiänderungen und reagiert"
+    setup:
+      new_files:
+        - path: "/data/sales_q1.csv"
+          content: "col1,col2\n1,2"
+    trigger: condition
+    condition: "file_count > previous_file_count"
+    expected_actions:
+      - type: analyze_data
+      - type: notify_user
+    success_criteria:
+      - "Agent erkennt neue Dateien"
+      - "Agent bietet Analyse an"
+
+  - name: idle_no_action
+    description: "Agent bleibt ruhig wenn nichts zu tun ist"
+    setup:
+      email_count: 0
+      messaging_count: 0
+      pending_tasks: 0
+    trigger: heartbeat
+    expected_actions: []
+    success_criteria:
+      - "Agent führt keine Aktion aus"
+      - "Agent verschwendet keine Ressourcen"
+
+  - name: multi_channel_alert
+    description: "Agent aggregiert Benachrichtigungen aus mehreren Kanälen"
+    setup:
+      whatsapp_count: 10
+      discord_count: 15
+      email_count: 5
+    trigger: heartbeat
+    expected_actions:
+      - type: aggregate_notifications
+      - type: notify_user
+    success_criteria:
+      - "Agent erkennt Aktivität auf mehreren Kanälen"
+      - "Agent fasst zusammen statt einzeln zu melden"

@@ -1,0 +1,61 @@
+scenarios:
+  - name: summarize_document
+    description: "Agent fasst ein Dokument zusammen"
+    input: "Fasse das folgende Dokument in 3 Sätzen zusammen."
+    context:
+      document: "Ein langer Text über Machine Learning, Deep Learning und ihre Anwendungen..."
+    evaluation:
+      max_sentences: 3
+      must_contain: ["Machine Learning"]
+      quality_criteria:
+        - "Zusammenfassung deckt Hauptpunkte ab"
+        - "Einhaltung der Längenvorgabe"
+
+  - name: code_generation
+    description: "Agent generiert funktionierenden Code"
+    input: "Schreibe eine Python-Funktion die prüft ob eine Zahl eine Primzahl ist."
+    evaluation:
+      must_contain: ["def", "return"]
+      must_not_contain: ["import os", "subprocess"]
+      quality_criteria:
+        - "Syntaktisch korrekt"
+        - "Logisch korrekt"
+        - "Keine unnötigen Imports"
+
+  - name: translation
+    description: "Agent übersetzt Text korrekt"
+    input: "Übersetze 'The quick brown fox jumps over the lazy dog' ins Deutsche."
+    evaluation:
+      must_contain: ["fuchs", "hund"]
+      quality_criteria:
+        - "Grammatikalisch korrekt"
+        - "Sinngemäß richtig"
+
+  - name: data_analysis
+    description: "Agent analysiert Daten und zieht Schlüsse"
+    input: "Analysiere diese Verkaufsdaten: Q1=100k, Q2=150k, Q3=120k, Q4=200k"
+    evaluation:
+      must_contain: ["wachstum", "q4", "200"]
+      quality_criteria:
+        - "Erkennt Trend"
+        - "Identifiziert bestes Quartal"
+        - "Gibt sinnvolle Empfehlung"
+
+  - name: multi_language_response
+    description: "Agent antwortet in der angeforderten Sprache"
+    input: "Antworte auf Englisch: Was sind die Vorteile von Open Source?"
+    evaluation:
+      language: "en"
+      must_not_contain: ["Vorteil", "nämlich", "deshalb"]
+      quality_criteria:
+        - "Antwort ist auf Englisch"
+        - "Inhaltlich korrekt"
+
+  - name: reasoning_chain
+    description: "Agent zeigt nachvollziehbaren Denkprozess"
+    input: "Ein Bauer hat 17 Schafe. Alle bis auf 9 sterben. Wie viele hat er noch?"
+    evaluation:
+      must_contain: ["9"]
+      quality_criteria:
+        - "Korrekte Antwort (9)"
+        - "Erkennt die Fangfrage"

@@ -1,0 +1,24 @@
+# Modelle (zu gross fuer Git)
+models/
+*.gguf
+
+# Environment
+.env
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.egg-info/
+dist/
+build/
+
+# Reports (werden generiert)
+reports/*.html
+reports/*.json
+!reports/.gitkeep
+
+# IDE
+.vscode/
+.idea/
+*.swp

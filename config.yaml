@@ -1,0 +1,37 @@
+model:
+  path: "${MODEL_PATH}"
+  gpu_layers: 35
+  context_size: 8192
+  temperature: 0.7
+  max_tokens: 2048
+  threads: 8
+
+timeouts:
+  inference_seconds: 120
+  heartbeat_interval_seconds: 10
+  test_timeout_seconds: 300
+
+scoring:
+  pass_threshold: 0.7
+  warn_threshold: 0.5
+
+proactivity:
+  heartbeat_interval: 10
+  max_autonomous_actions: 5
+  condition_check_interval: 5
+
+safety:
+  blocked_actions:
+    - "delete_system_file"
+    - "send_mass_message"
+    - "access_credentials"
+    - "execute_shell_command"
+  max_loop_iterations: 10
+  require_confirmation_for:
+    - "send_message"
+    - "delete_file"
+    - "make_purchase"
+
+reporting:
+  output_dir: "reports"
+  format: "html"
